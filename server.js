@@ -391,6 +391,78 @@ app.post("/forget-password-step-2", (req, res, next) => {
 
 
 
+//POST
+
+app.post("/tweet", (req, res, next) => {
+    if (!req.body.jToken.id || !req.body.tweet) {
+        res.send({
+            status: 401,
+            message: "Please write tweet"
+        })
+    }
+    userModel.findById(req.body.jToken.id, 'name', function (err, user) {
+        if (!err) {
+            tweetModel.create({
+                "username": user.name,
+                "tweet": req.body.tweet
+            }, function (err, data) {
+                if (err) {
+                    res.send({
+                        message: "Tweet DB ERROR",
+                        status: 404
+                    });
+                }
+                else if (data) {
+                    console.log("data checking Tweeter ", data);
+                    res.send({
+                        message: "Your Tweet Send",
+                        status: 200,
+                        tweet: data
+                    });
+                    io.emit("NEW_POST", data);
+
+                    console.log("server checking code tweet ", data.tweet)
+                } else {
+                    res.send({
+                        message: "Tweets posting error try again later",
+                        status: 500
+                    });
+                }
+            });
+            
+        } else {
+            res.send({
+                message: "User Not Found",
+                status: 404
+            });
+        }
+    });
+
+
+});
+
+app.get("/tweet-get", (req, res, next) => {
+    tweetModel.find({}, function (err, data) {
+        if (err) {
+            res.send({
+                message: "Error :" + err,
+                status: 404
+            });
+        } else if (data) {
+            res.send({
+                gettweet: data,
+                status: 200
+            });
+        } else {
+            res.send({
+                message: "User Not Found"
+            });
+        }
+    });
+});
+
+
+
 
 //LOGOUT
 

@@ -124,4 +124,55 @@ function profile() {
 }
 
 
+//POST
+
+function tweetpost() {
+    axios({
+        method: 'post',
+        url: url + "/tweet",
+        data: {
+            tweet: document.getElementById("tweet").value,
+        },
+        withCredentials: true
+    }).then((response) => {
+        if (response.data.status === 200) {
+            alert(response.data.message)
+            return
+        } else {
+            alert(response.data.message)
+        }
+    }, (error) => {
+        console.log(error);
+    });
+}
+
+
+function gettweet() {
+    getProfile();
+    axios({
+        method: 'get',
+        url: url + '/tweet-get',
+        credentials: 'include',
+    }).then((response) => {
+        let tweets = response.data.gettweet;
+        for (i = 0; i < tweets.length; i++) {
+            var eachtweet = document.createElement("li");
+            eachtweet.innerHTML = `<h4>
+                ${tweets[i].username}
+                </h4>
+                 <p>
+                    ${tweets[i].tweet}
+                </p>`;
+            document.getElementById("mytweet").appendChild(eachtweet);
+        }
+    }, (error) => {
+        console.log(error.message);
+    });
+
+
+    return false
+}
+
+
+
 
