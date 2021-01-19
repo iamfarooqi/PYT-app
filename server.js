@@ -13,7 +13,7 @@ const path = require("path");
 const axios = require('axios')
 var http = require("http");
 var socketIO = require('socket.io');
-// var client = new postmark.Client("");
+// var client = new postmark.Client("postmark token");
 
 var SERVER_SECRET = process.env.SECRET || "1234"
 
@@ -58,6 +58,7 @@ var userSchema = new mongoose.Schema({
     email: String,
     password: String,
     phone: String,
+    gender: String,
     createdOn: {
         type: Date,
         'default': Date.now
@@ -114,10 +115,11 @@ io.on("connection", (user) => {
 
 app.post("/signup", (req, res, next) => {
 
-    if (!req.body.name ||
-        !req.body.email ||
-        !req.body.password ||
-        !req.body.phone
+    if (!req.body.name
+        || !req.body.email
+        || !req.body.password
+        || !req.body.phone 
+        || !req.body.gender
     ) {
 
         res.status(403).send(`
@@ -128,13 +130,12 @@ app.post("/signup", (req, res, next) => {
                 "email": "farooq@gmail.com",
                 "password": "12345",
                 "phone": "03332765421",
+                "gender": "male",
                 
             }`)
         return;
     }
-    userModel.findOne({
-            email: req.body.email
-        },
+    userModel.findOne({email: req.body.email},
         function (err, doc) {
             if (!err && !doc) {
 
@@ -145,6 +146,7 @@ app.post("/signup", (req, res, next) => {
                         "email": req.body.email,
                         "password": hash,
                         "phone": req.body.phone,
+                        "gender": req.body.gender,
                     })
                     newUser.save((err, data) => {
                         if (!err) {
@@ -267,6 +269,8 @@ app.use(function (req, res, next) {
                     id: decodedData.id,
                     name: decodedData.name,
                     email: decodedData.email,
+                    phone: decodedData.phone,
+                    gender: decodedData.gender,
                 }, SERVER_SECRET)
                 res.cookie('jToken', token, {
                     maxAge: 86_400_000,
@@ -317,7 +321,7 @@ app.post("/forget-password", (req, res, next) => {
                 }).then((doc) => {
 
                     // client.sendEmail({
-                    //     "From": "ahmed_student@sysborg.com",
+                    //     "From": "postmark email",
                     //     "To": req.body.email,
                     //     "Subject": "Reset your password",
                     //     "TextBody": `Here is your password reset code: ${otp}`

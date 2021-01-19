@@ -19,20 +19,21 @@ function signup() {
                 userName: document.getElementById("name").value,
                 userEmail: document.getElementById("email").value,
                 userPassword: document.getElementById("password").value,
-                userPhone: document.getElementById("phone").value
+                userPhone: document.getElementById("phone").value,
+                userGender: document.getElementById("gender").value
 
 
             }
 
-        }).then(function (response) {
-            console.log(response.data.message);
-            alert(response.data.message);
-            window.location.href = "login.html"
-        })
-
-        .catch(function (error) {
+        }).then((response) => {
+            if (response.data.status === 200) {
+                alert(response.data.message)
+                location.href = "login.html"
+            } else {
+                alert(response.data.message);
+            }
+        }).catch((error) => {
             console.log(error);
-            alert(response.message)
         });
 
     return false;
@@ -126,7 +127,8 @@ function profile() {
         document.getElementById('name').innerHTML = response.data.profile.name;
         document.getElementById('email').innerHTML = response.data.profile.email;
         document.getElementById('phone').innerHTML = response.data.profile.phone;
-        document.getElementById("user-id").innerHTML = response.data.profile._id
+        document.getElementById("user-id").innerHTML = response.data.profile._id;
+        document.getElementById("gender").innerHTML = response.data.profile.gender
         
     }, (error) => {
         console.log(error.message);
@@ -169,9 +171,9 @@ function gettweet() {
         let tweets = response.data.tweet;
         for (i = 0; i < tweets.length; i++) {
             var eachtweet = document.createElement("li");
-            eachtweet.innerHTML = `<h4>
+            eachtweet.innerHTML = `<h5>
             ${tweets[i].username}
-            </h4>
+            </h5>
             <p>
             ${tweets[i].tweet}
             </p>`;
