@@ -545,23 +545,7 @@ app.get("/profile", (req, res, next) => {
 })
 
 
-//COOKIES
-
-
-
-
 //SERVER
-
-
-
-
-
-
-
-
-
-
-
 
 server.listen(PORT, () => {
     console.log("server is running on: ", PORT);

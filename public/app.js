@@ -123,8 +123,10 @@ function profile() {
         credentials: 'include',
     }).then((response) => {
         console.log(response);
-        document.getElementById('name').innerHTML = response.data.profile.name
-        // document.getElementById('email').innerHTML = response.data.profile.email
+        document.getElementById('name').innerHTML = response.data.profile.name;
+        document.getElementById('email').innerHTML = response.data.profile.email;
+        document.getElementById('phone').innerHTML = response.data.profile.phone;
+        document.getElementById("user-id").innerHTML = response.data.profile._id
         
     }, (error) => {
         console.log(error.message);
