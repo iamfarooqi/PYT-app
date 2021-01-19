@@ -1,6 +1,7 @@
 ///SignUP
+var url = "https://pyt-app.herokuapp.com/";
 
-const url = "http://localhost:5000"
+// const url = "http://localhost:5000"
 
 var socket = io(url);
 
