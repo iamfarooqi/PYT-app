@@ -122,8 +122,8 @@ function profile() {
         credentials: 'include',
     }).then((response) => {
         console.log(response);
-        document.getElementById('name').innerHTML = response.data.profile.username
-        // document.getElementById('email').innerHTML = response.data.profile.useremail
+        document.getElementById('name').innerHTML = response.data.profile.name
+        document.getElementById('email').innerHTML = response.data.profile.email
     }, (error) => {
         console.log(error.message);
     });
@@ -156,7 +156,7 @@ function tweetpost() {
 
 
 function gettweet() {
-    // getProfile();
+    getProfile();
     axios({
         method: 'get',
         url: url + '/tweet-get',
@@ -201,3 +201,21 @@ socket.on("NEW_POST", (newPost) => {
 
 
 })
+
+
+///LOGOUT
+
+
+function logout() {
+    axios({
+        method: 'post',
+        url: url + '/logout',
+      
+    }).then((response) => {
+        console.log(response);
+        window.location.href = "./login.html"
+    }, (error) => {
+        console.log(error.message);
+    });
+    return false
+}

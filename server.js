@@ -102,53 +102,6 @@ app.use(cookieParser());
 
 app.use("/", express.static(path.resolve(path.join(__dirname, "public"))));
 
-// app.use(function (req, res, next) {
-
-//     console.log("req.cookies: ", req.cookies);
-
-//     if (!req.cookies.jToken) {
-//         res.status(401).send("include http-only credentials with every request")
-//         return;
-//     }
-//     jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
-//         if (!err) {
-
-//             const issueDate = decodedData.iat * 1000;
-//             const nowDate = new Date().getTime();
-//             const diff = nowDate - issueDate; // 84600,000
-
-//             if (diff > 300000) { // expire after 5 min (in milis)
-//                 res.send({
-//                     message: "TOKEN EXPIRED",
-//                     status: 401
-//                 });
-//             } else { // issue new Token
-//                 var token = jwt.sign({
-//                     id: decodedData.id,
-//                     name: decodedData.name,
-//                     email: decodedData.email,
-//                     phone: decodedData.phone,
-//                     gender: decodedData.gender
-//                 }, SERVER_SECRET)
-
-//                 res.cookie('jToken', token, {
-//                     maxAge: 86_400_000,
-//                     httpOnly: true
-//                 });
-//                 req.body.jToken = decodedData
-//                 next();
-//             }
-//         } else {
-//             res.send({
-//                 message: "Invalid Token",
-//                 status: 401
-//             });
-//         }
-
-
-//     });
-
-// });
 
 
 var io = socketIO(server);
