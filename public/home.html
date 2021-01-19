@@ -10,11 +10,11 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./socket.io.js"></script>
   </head>
-  <body  onload="gettweet()">
+  <body  onload="gettweet(), profile()">
     
     <nav class="navbar navbar-expand-lg navbar-light bg-primary" >
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">PYT</a>
+        <a style="color: white; font-weight: bolder;" class="navbar-brand" href="#">PYT</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -26,13 +26,15 @@
           <form style="margin-right: 3%;" class="d-flex">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               
+              <h3 style="color: white;" id="name">Name</h3>
               
               <div  class="btn-group">
                 <button  style="background-color: red;font-weight: bolder;" class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Profile
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a onclick="profile()" class="dropdown-item active" href="./profile.html">Profile</a></li>
+            
+                  <li><button onclick="return profile()" class="dropdown-item active">Profile</button></li>
                   <li><a class="dropdown-item" href="#">About</a></li>
                   <li><a class="dropdown-item" href="#">Setting</a></li>
                           <li><hr class="dropdown-divider"></li>

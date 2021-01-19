@@ -123,7 +123,8 @@ function profile() {
     }).then((response) => {
         console.log(response);
         document.getElementById('name').innerHTML = response.data.profile.name
-        document.getElementById('email').innerHTML = response.data.profile.email
+        // document.getElementById('email').innerHTML = response.data.profile.email
+        
     }, (error) => {
         console.log(error.message);
     });
@@ -156,7 +157,7 @@ function tweetpost() {
 
 
 function gettweet() {
-    getProfile();
+    // getProfile();
     axios({
         method: 'get',
         url: url + '/tweet-get',
@@ -213,7 +214,7 @@ function logout() {
       
     }).then((response) => {
         console.log(response);
-        window.location.href = "./login.html"
+        window.location.href = "login.html"
     }, (error) => {
         console.log(error.message);
     });
