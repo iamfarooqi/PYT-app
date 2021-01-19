@@ -11,12 +11,15 @@ var cookieParser = require('cookie-parser');
 var postmark = require("postmark");
 const path = require("path");
 const axios = require('axios')
-
-// var client = new postmark.Client("03d41ca2-fd57-4edd-9e9e-506ac1aaf894");
+var http = require("http");
+var socketIO = require('socket.io');
+// var client = new postmark.Client("");
 
 var SERVER_SECRET = process.env.SECRET || "1234"
 
 // var userModel = mongoose.model("users", userSchema);
+
+
 
 
 
@@ -75,13 +78,20 @@ var otpSchema = new mongoose.Schema({
 
 var otpModel = mongoose.model("otps", otpSchema);
 
+var tweetSchema = new mongoose.Schema({
+    "username": String,
+    "tweet": String
+});
+var tweetModel = mongoose.model("tweet", tweetSchema);
+
 module.exports = {
     userModel: userModel,
-    otpModel: otpModel
+    otpModel: otpModel,
+    tweetModel: tweetModel
 }
 
 var app = express();
-
+var server = http.createServer(app);
 app.use(bodyParser.json());
 app.use(cors({
     origin: "*",
@@ -92,17 +102,69 @@ app.use(cookieParser());
 
 app.use("/", express.static(path.resolve(path.join(__dirname, "public"))));
 
+// app.use(function (req, res, next) {
 
+//     console.log("req.cookies: ", req.cookies);
+
+//     if (!req.cookies.jToken) {
+//         res.status(401).send("include http-only credentials with every request")
+//         return;
+//     }
+//     jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
+//         if (!err) {
+
+//             const issueDate = decodedData.iat * 1000;
+//             const nowDate = new Date().getTime();
+//             const diff = nowDate - issueDate; // 84600,000
+
+//             if (diff > 300000) { // expire after 5 min (in milis)
+//                 res.send({
+//                     message: "TOKEN EXPIRED",
+//                     status: 401
+//                 });
+//             } else { // issue new Token
+//                 var token = jwt.sign({
+//                     id: decodedData.id,
+//                     name: decodedData.name,
+//                     email: decodedData.email,
+//                     phone: decodedData.phone,
+//                     gender: decodedData.gender
+//                 }, SERVER_SECRET)
+
+//                 res.cookie('jToken', token, {
+//                     maxAge: 86_400_000,
+//                     httpOnly: true
+//                 });
+//                 req.body.jToken = decodedData
+//                 next();
+//             }
+//         } else {
+//             res.send({
+//                 message: "Invalid Token",
+//                 status: 401
+//             });
+//         }
+
+
+//     });
+
+// });
+
+
+var io = socketIO(server);
+io.on("connection", (user) => {
+    console.log("user connected");
+})
 
 //******* SIGNUP ********//
 
 
 app.post("/signup", (req, res, next) => {
 
-    if (!req.body.userName ||
-        !req.body.userEmail ||
-        !req.body.userPassword ||
-        !req.body.userPhone
+    if (!req.body.name ||
+        !req.body.email ||
+        !req.body.password ||
+        !req.body.phone
     ) {
 
         res.status(403).send(`
@@ -117,24 +179,19 @@ app.post("/signup", (req, res, next) => {
             }`)
         return;
     }
-
-
-
-
-
     userModel.findOne({
-            email: req.body.userEmail
+            email: req.body.email
         },
         function (err, doc) {
             if (!err && !doc) {
 
-                bcrypt.stringToHash(req.body.userPassword).then(function (hash) {
+                bcrypt.stringToHash(req.body.password).then(function (hash) {
 
                     var newUser = new userModel({
-                        "name": req.body.userName,
-                        "email": req.body.userEmail,
+                        "name": req.body.name,
+                        "email": req.body.email,
                         "password": hash,
-                        "phone": req.body.userPhone,
+                        "phone": req.body.phone,
                     })
                     newUser.save((err, data) => {
                         if (!err) {
@@ -208,9 +265,6 @@ app.post("/login", (req, res, next) => {
                             maxAge: 86_400_000,
                             httpOnly: true
                         });
-
-
-
                         res.send({
                             message: "login success",
                             user: {
@@ -238,6 +292,40 @@ app.post("/login", (req, res, next) => {
             }
         });
 
+})
+app.use(function (req, res, next) {
+
+    console.log("req.cookies: ", req.cookies);
+    if (!req.cookies.jToken) {
+        res.status(401).send("include http-only credentials with every request")
+        return;
+    }
+    jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
+        if (!err) {
+
+            const issueDate = decodedData.iat * 1000;
+            const nowDate = new Date().getTime();
+            const diff = nowDate - issueDate; // 86400,000
+
+            if (diff > 300000) { // expire after 5 min (in milis)
+                res.status(401).send("token expired")
+            } else { // issue new token
+                var token = jwt.sign({
+                    id: decodedData.id,
+                    name: decodedData.name,
+                    email: decodedData.email,
+                }, SERVER_SECRET)
+                res.cookie('jToken', token, {
+                    maxAge: 86_400_000,
+                    httpOnly: true
+                });
+                req.body.jToken = decodedData
+                next();
+            }
+        } else {
+            res.status(401).send("invalid token")
+        }
+    });
 })
 
 
@@ -291,9 +379,9 @@ app.post("/forget-password", (req, res, next) => {
                     // })
                     console.log("your OTP: ", otp);
                     res.send({
-                                message: "Email Send OPT",
-                                status: 200
-                            })
+                        message: "Email Send OPT",
+                        status: 200
+                    })
 
                 }).catch((err) => {
                     console.log("error in creating otp: ", err);
@@ -364,7 +452,7 @@ app.post("/forget-password-step-2", (req, res, next) => {
                                         password: hash
                                     }, {}, function (err, data) {
                                         res.send({
-                                            message:"Your password has been changed"
+                                            message: "Your password has been changed"
                                         });
                                     })
                                 })
@@ -394,6 +482,8 @@ app.post("/forget-password-step-2", (req, res, next) => {
 //POST
 
 app.post("/tweet", (req, res, next) => {
+   
+
     if (!req.body.jToken.id || !req.body.tweet) {
         res.send({
             status: 401,
@@ -429,7 +519,7 @@ app.post("/tweet", (req, res, next) => {
                     });
                 }
             });
-            
+
         } else {
             res.send({
                 message: "User Not Found",
@@ -450,7 +540,7 @@ app.get("/tweet-get", (req, res, next) => {
             });
         } else if (data) {
             res.send({
-                gettweet: data,
+                tweet: data,
                 status: 200
             });
         } else {
@@ -504,52 +594,22 @@ app.get("/profile", (req, res, next) => {
 
 //COOKIES
 
-app.use(function (req, res, next) {
-
-    console.log("req.cookies: ", req.cookies);
-    if (!req.cookies.jToken) {
-        res.status(401).send("include http-only credentials with every request")
-        return;
-    }
-    jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
-        if (!err) {
-
-            const issueDate = decodedData.iat * 1000;
-            const nowDate = new Date().getTime();
-            const diff = nowDate - issueDate; // 86400,000
-
-            if (diff > 300000) { // expire after 5 min (in milis)
-                res.status(401).send("token expired")
-            } else { // issue new token
-                var token = jwt.sign({
-                    id: decodedData.id,
-                    name: decodedData.name,
-                    email: decodedData.email,
-                }, SERVER_SECRET)
-                res.cookie('jToken', token, {
-                    maxAge: 86_400_000,
-                    httpOnly: true
-                });
-                req.body.jToken = decodedData
-                next();
-            }
-        } else {
-            res.status(401).send("invalid token")
-        }
-    });
-})
 
 
 
-//Server
-app.listen(PORT, () => {
+//SERVER
+
+
+
+
+
+
+
+
+
+
+
+
+server.listen(PORT, () => {
     console.log("server is running on: ", PORT);
 })
-// newUser.save((err, data) => {
-//     if (!err) {
-//         res.send("user created")
-//     } else {
-//         console.log(err);
-//         res.status(500).send("user create error, " + err)
-//     }
-// });

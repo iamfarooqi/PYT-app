@@ -63,6 +63,13 @@ h2 {
     color: #496174
 }
 
+.reverse{
+    transform: rotate(180deg);
+}
+#mytweet{
+    list-style-type: none;
+}
+
 
 /* HOME */
 
