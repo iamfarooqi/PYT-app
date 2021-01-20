@@ -119,4 +119,8 @@ body{
     .nav-link{
       font-size: 1.2em;    
     }
+
+    label{
+      font-weight: bold;
+    }
     
