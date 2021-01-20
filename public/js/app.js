@@ -1,7 +1,7 @@
 ///SignUP
-// var url = "https://pyt-app.herokuapp.com/";
+var url = "https://pyt-app.herokuapp.com/";
 
-const url = "http://localhost:5000"
+// const url = "http://localhost:5000"
 
 var socket = io(url);
 socket.on('connect', function () {
@@ -160,6 +160,30 @@ function gettweet() {
 }
 
 
+//My Tweets
+
+function mytweet() {
+    axios({
+        method: 'get',
+        url: url + '/myTweets',
+        credentials: 'include',
+    }).then((response) => {
+        let tweets = response.data.tweet;
+        for (i = 0; i < tweets.length; i++) {
+            var eachtweet = document.createElement("li");
+            eachtweet.innerHTML = `<h4>
+                ${tweets[i].username}
+                </h4>
+                 <p>
+                    ${tweets[i].tweet}
+                </p>`;
+            document.getElementById("getalltweet").appendChild(eachtweet);
+        }
+    }, (error) => {
+        console.log(error.message);
+    });
+}
+
 
 
 
@@ -184,6 +208,27 @@ socket.on("NEW_POST", (newPost) => {
     
     
 })
+
+
+socket.on("MY_POST", (newPost) => {
+
+    console.log("second socket chnage", newPost)
+    console.log(newPost);
+
+    let jsonRes = newPost;
+    var eachtweet = document.createElement("li");
+    eachtweet.innerHTML = `<h4>
+    ${jsonRes.username}
+    </h4>
+     <p>
+        ${jsonRes.tweet}
+    </p>`;
+
+    document.getElementById("getalltweet").appendChild(eachtweet);
+
+
+})
+
 
 
 //PROFILE
