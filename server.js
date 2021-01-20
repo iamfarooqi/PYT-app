@@ -195,13 +195,10 @@ app.post("/login", (req, res, next) => {
         return;
     }
 
-    userModel.findOne({
-            email: req.body.email
-        },
-        function (err, user) {
+    userModel.findOne({email: req.body.email},function (err, user) {
             if (err) {
                 res.status(500).send({
-                    message: "an error occured: " + JSON.stringify(err)
+                    message: "an error Occured: " + JSON.stringify(err)
                 });
             } else if (user) {
 
@@ -220,6 +217,7 @@ app.post("/login", (req, res, next) => {
                             maxAge: 86_400_000,
                             httpOnly: true
                         });
+                        
                         res.send({
                             message: "login success",
                             user: {
@@ -250,42 +248,6 @@ app.post("/login", (req, res, next) => {
 })
 
 
-app.use(function (req, res, next) {
-
-    console.log("req.cookies: ", req.cookies);
-    if (!req.cookies.jToken) {
-        res.status(401).send("include http-only credentials with every request")
-        return;
-    }
-    jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
-        if (!err) {
-
-            const issueDate = decodedData.iat * 1000;
-            const nowDate = new Date().getTime();
-            const diff = nowDate - issueDate; 
-
-            if (diff > 300000) { // expire after 5 min (in milis)
-                res.status(401).send("token expired")
-            } else { 
-                var token = jwt.sign({
-                    id: decodedData.id,
-                    name: decodedData.name,
-                    email: decodedData.email,
-                    phone: decodedData.phone,
-                    gender: decodedData.gender,
-                }, SERVER_SECRET)
-                res.cookie('jToken', token, {
-                    maxAge: 86_400_000,
-                    httpOnly: true
-                });
-                req.body.jToken = decodedData
-                next();
-            }
-        } else {
-            res.status(401).send("invalid token")
-        }
-    });
-})
 
 
 
@@ -303,17 +265,13 @@ app.post("/forget-password", (req, res, next) => {
             {
                 "email": "example@gmail.com"
             }`)
-        return;
     }
 
-    userModel.findOne({
-            email: req.body.email
-        },
-        function (err, user) {
+    userModel.findOne({email: req.body.email},function (err, user) {
             if (err) {
                 res.status(500).send({
                     message: "an error ocurred: " + JSON.stringify(err)
-                });
+                })
             } else if (user) {
                 const otp = Math.floor(getRandomArbitrary(11111, 99999))
 
@@ -340,7 +298,8 @@ app.post("/forget-password", (req, res, next) => {
                     res.send({
                         message: "Email Send OPT",
                         status: 200
-                    })
+                    });
+                    
 
                 }).catch((err) => {
                     console.log("error in creating otp: ", err);
@@ -395,7 +354,7 @@ app.post("/forget-password-step-2", (req, res, next) => {
                         } else if (otpData) {
                             otpData = otpData[otpData.length - 1]
 
-                            console.log("otpData ya abdullah opt: ", otpData);
+                            console.log("otpData: ", otpData);
 
                             const now = new Date().getTime();
                             const otpIat = new Date(otpData.createdOn).getTime(); // 2021-01-06T13:08:33.657+0000
@@ -526,9 +485,51 @@ app.post("/logout", (req, res, next) => {
 })
 
 
+
+
+
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
+
+
+app.use(function (req, res, next) {
+
+    console.log("req.cookies: ", req.cookies);
+    if (!req.cookies.jToken) {
+        res.status(401).send("include http-only credentials with every request")
+        return;
+    }
+    jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
+        if (!err) {
+
+            const issueDate = decodedData.iat * 1000;
+            const nowDate = new Date().getTime();
+            const diff = nowDate - issueDate; 
+        
+
+            if (diff > 300000) { // expire after 5 min (in milis)
+                res.status(401).send("token expired")
+            } else { 
+                var token = jwt.sign({
+                    id: decodedData.id,
+                    name: decodedData.name,
+                    email: decodedData.email,
+                    phone: decodedData.phone,
+                    gender: decodedData.gender,
+                }, SERVER_SECRET)
+                res.cookie('jToken', token, {
+                    maxAge: 86_400_000,
+                    httpOnly: true
+                });
+                req.body.jToken = decodedData
+                next();
+            }
+        } else {
+            res.status(401).send("invalid token")
+        }
+    });
+})
 
 //PROFILE
 

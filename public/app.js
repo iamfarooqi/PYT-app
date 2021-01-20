@@ -21,7 +21,7 @@ function signup() {
             gender: document.getElementById("gender").value
             
             
-        }
+        },withCredentials: true
         
     }).then(function (response) {
         console.log(response.data.message);
@@ -47,7 +47,7 @@ function login() {
         data: {
             email: document.getElementById("login-email").value,
             password: document.getElementById("login-password").value,
-        } //, withCredentials: true
+        }, withCredentials: true
         
     }).then((response) => {
         console.log(response);
@@ -71,7 +71,7 @@ function forgot1() {
         url: url + "/forget-password",
         data: {
             email: document.getElementById("your-email").value,
-        }
+        },withCredentials: true
     }).then((response) => {
         console.log(response);
         alert(response.data.message);
@@ -94,7 +94,7 @@ function forgot2() {
             email: document.getElementById("email2").value,
             newPassword: document.getElementById("password2").value,
             otp: document.getElementById("otp").value,
-        }
+        },withCredentials: true
     }).then((response) => {
         
         console.log(response.data.message);
@@ -140,8 +140,8 @@ function tweetpost() {
         url: url + "/tweet",
         data: {
             tweet: document.getElementById("your-post").value,
-        },
-        withCredentials: true
+        },withCredentials: true
+
     }).then((response) => {
         if (response.data.status === 200) {
             // alert(response.data.message)
@@ -211,6 +211,7 @@ function logout() {
     axios({
         method: 'post',
         url: url + '/logout',
+        credentials: 'include'
         
     }).then((response) => {
         console.log(response);
