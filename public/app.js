@@ -4,9 +4,7 @@
 const url = "http://localhost:5000"
 
 var socket = io(url);
-
 socket.on('connect', function () {
-    console.log("connected")
 });
 
 function signup() {
@@ -16,24 +14,24 @@ function signup() {
             method: 'post',
             url: url + "/signup",
             data: {
-                userName: document.getElementById("name").value,
-                userEmail: document.getElementById("email").value,
-                userPassword: document.getElementById("password").value,
-                userPhone: document.getElementById("phone").value,
-                userGender: document.getElementById("gender").value
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                phone: document.getElementById("phone").value,
+                gender: document.getElementById("gender").value
 
 
             }
 
-        }).then((response) => {
-            if (response.data.status === 200) {
-                alert(response.data.message)
-                location.href = "login.html"
-            } else {
-                alert(response.data.message);
-            }
-        }).catch((error) => {
+        }).then(function (response) {
+            console.log(response.data.message);
+            alert(response.data.message);
+            window.location.href = "login.html"
+        })
+    
+        .catch(function (error) {
             console.log(error);
+            alert(response.message)
         });
 
     return false;
@@ -123,14 +121,15 @@ function profile() {
         url: url + '/profile',
         credentials: 'include',
     }).then((response) => {
-        console.log(response);
+        // console.log(response);
         document.getElementById('name').innerHTML = response.data.profile.name;
         document.getElementById('email').innerHTML = response.data.profile.email;
         document.getElementById('phone').innerHTML = response.data.profile.phone;
         document.getElementById("user-id").innerHTML = response.data.profile._id;
         document.getElementById("gender").innerHTML = response.data.profile.gender
         
-    }, (error) => {
+    },
+     (error) => {
         console.log(error.message);
     });
     return false
@@ -149,7 +148,7 @@ function tweetpost() {
         withCredentials: true
     }).then((response) => {
         if (response.data.status === 200) {
-            alert(response.data.message)
+            // alert(response.data.message)
             return
         } else {
             alert(response.data.message)
@@ -191,7 +190,7 @@ function gettweet() {
 socket.on("NEW_POST", (newPost) => {
 
 
-    console.log(newPost);
+    // console.log(newPost);
 
     let jsonRes = newPost;
     var eachtweet = document.createElement("li");

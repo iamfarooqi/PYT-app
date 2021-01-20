@@ -114,15 +114,15 @@ io.on("connection", (user) => {
 
 
 app.post("/signup", (req, res, next) => {
-
-    if (!req.body.name
+    
+    if (   !req.body.name
         || !req.body.email
         || !req.body.password
         || !req.body.phone 
         || !req.body.gender
-    ) {
-
-        res.status(403).send(`
+        ) {
+            
+            res.status(403).send(`
             please send name, email, password, phone and gender in json body.
             e.g:
             {
