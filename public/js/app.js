@@ -109,29 +109,6 @@ function forgot2() {
     
 }
 
-//PROFILE
-
-function profile() {
-    axios({
-        method: 'get',
-        url: url + '/profile',
-        credentials: 'include',
-    }).then((response) => {
-        // console.log(response);
-        document.getElementById('name').innerHTML = response.data.profile.name;
-        document.getElementById('email').innerHTML = response.data.profile.email;
-        document.getElementById('phone').innerHTML = response.data.profile.phone;
-        document.getElementById("user-id").innerHTML = response.data.profile._id;
-        document.getElementById("gender").innerHTML = response.data.profile.gender
-        
-    },
-    (error) => {
-        console.log(error.message);
-    });
-    return false
-}
-
-
 //POST
 
 function tweetpost() {
@@ -154,7 +131,6 @@ function tweetpost() {
     });
     return false;
 }
-
 
 function gettweet() {
     // getProfile();
@@ -183,6 +159,12 @@ function gettweet() {
     return false
 }
 
+
+
+
+
+
+
 socket.on("NEW_POST", (newPost) => {
     
     
@@ -202,6 +184,29 @@ socket.on("NEW_POST", (newPost) => {
     
     
 })
+
+
+//PROFILE
+
+function profile() {
+    axios({
+        method: 'get',
+        url: url + '/profile',
+        credentials: 'include',
+    }).then((response) => {
+        // console.log(response);
+        document.getElementById('name').innerHTML = response.data.profile.name;
+        document.getElementById('email').innerHTML = response.data.profile.email;
+        document.getElementById('phone').innerHTML = response.data.profile.phone;
+        document.getElementById("user-id").innerHTML = response.data.profile._id;
+        document.getElementById("gender").innerHTML = response.data.profile.gender
+        
+    },
+    (error) => {
+        console.log(error.message);
+    });
+    return false
+}
 
 
 ///LOGOUT
