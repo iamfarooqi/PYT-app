@@ -1,5 +1,5 @@
 ///SignUP
-var url = "https://pyt-app.herokuapp.com/";
+var url = "https://pyt-app.herokuapp.com";
 
 // const url = "http://localhost:5000"
 
