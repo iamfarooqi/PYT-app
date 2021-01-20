@@ -248,6 +248,8 @@ app.post("/login", (req, res, next) => {
         });
 
 })
+
+
 app.use(function (req, res, next) {
 
     console.log("req.cookies: ", req.cookies);
@@ -260,11 +262,11 @@ app.use(function (req, res, next) {
 
             const issueDate = decodedData.iat * 1000;
             const nowDate = new Date().getTime();
-            const diff = nowDate - issueDate; // 86400,000
+            const diff = nowDate - issueDate; 
 
             if (diff > 300000) { // expire after 5 min (in milis)
                 res.status(401).send("token expired")
-            } else { // issue new token
+            } else { 
                 var token = jwt.sign({
                     id: decodedData.id,
                     name: decodedData.name,
