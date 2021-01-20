@@ -299,7 +299,7 @@ app.post("/forget-password", (req, res, next) => {
             please send email in json body.
             e.g:
             {
-                "email": "farooqi@gmail.com"
+                "email": "example@gmail.com"
             }`)
         return;
     }

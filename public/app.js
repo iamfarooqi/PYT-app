@@ -1,46 +1,46 @@
 ///SignUP
-var url = "https://pyt-app.herokuapp.com/";
+// var url = "https://pyt-app.herokuapp.com/";
 
-// const url = "http://localhost:5000"
+const url = "http://localhost:5000"
 
 var socket = io(url);
 socket.on('connect', function () {
 });
 
 function signup() {
-
-
-    axios({
-            method: 'post',
-            url: url + "/signup",
-            data: {
-                name: document.getElementById("name").value,
-                email: document.getElementById("email").value,
-                password: document.getElementById("password").value,
-                phone: document.getElementById("phone").value,
-                gender: document.getElementById("gender").value
-
-
-            }
-
-        }).then(function (response) {
-            console.log(response.data.message);
-            alert(response.data.message);
-            window.location.href = "login.html"
-        })
     
-        .catch(function (error) {
-            console.log(error);
-            alert(response.message)
-        });
-
+    
+    axios({
+        method: 'post',
+        url: url + "/signup",
+        data: {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            phone: document.getElementById("phone").value,
+            gender: document.getElementById("gender").value
+            
+            
+        }
+        
+    }).then(function (response) {
+        console.log(response.data.message);
+        alert(response.data.message);
+        window.location.href = "login.html"
+    })
+    
+    .catch(function (error) {
+        console.log(error);
+        alert(response.message)
+    });
+    
     return false;
 }
 
 ///Login
 
 function login() {
-
+    
     axios({
         method: 'post',
         url: url + "/login",
@@ -48,7 +48,7 @@ function login() {
             email: document.getElementById("login-email").value,
             password: document.getElementById("login-password").value,
         } //, withCredentials: true
-
+        
     }).then((response) => {
         console.log(response);
         alert(response.data.message)
@@ -57,7 +57,7 @@ function login() {
         console.log(error);
         alert(error)
     });
-
+    
     return false;
 }
 
@@ -65,28 +65,24 @@ function login() {
 //FORGET STEP-1
 
 function forgot1() {
-
+    
     axios({
         method: 'post',
         url: url + "/forget-password",
         data: {
             email: document.getElementById("your-email").value,
         }
-        // withCredentials: true
     }).then((response) => {
-        if (response.data.status === 200) {
-            console.log(response.data.message);
-            alert(response.data.message);
-            window.location.href = "forget2.html"
-        } else {
-            alert(response.data.message)
-        }
+        console.log(response);
+        alert(response.data.message);
+        window.location.href = "forget2.html"
     }, (error) => {
         console.log(error);
+        alert(error)
     });
-
+    
     return false;
-
+    
 }
 
 
@@ -100,17 +96,17 @@ function forgot2() {
             otp: document.getElementById("otp").value,
         }
     }).then((response) => {
-
+        
         console.log(response.data.message);
         alert(response.data.message);
         window.location.href = "login.html"
-
-
+        
+        
     }, (error) => {
         console.log(error);
     });
     return false;
-
+    
 }
 
 //PROFILE
@@ -129,7 +125,7 @@ function profile() {
         document.getElementById("gender").innerHTML = response.data.profile.gender
         
     },
-     (error) => {
+    (error) => {
         console.log(error.message);
     });
     return false
@@ -182,29 +178,29 @@ function gettweet() {
     }, (error) => {
         console.log(error.message);
     });
-
-
+    
+    
     return false
 }
 
 socket.on("NEW_POST", (newPost) => {
-
-
+    
+    
     // console.log(newPost);
-
+    
     let jsonRes = newPost;
     var eachtweet = document.createElement("li");
     eachtweet.innerHTML = `<h4>
     ${jsonRes.username}
     </h4>
-     <p>
-        ${jsonRes.tweet}
+    <p>
+    ${jsonRes.tweet}
     </p>`;
     eachtweet.setAttribute('class','reverse')
-
+    
     document.getElementById("mytweet").appendChild(eachtweet);
-
-
+    
+    
 })
 
 
@@ -215,7 +211,7 @@ function logout() {
     axios({
         method: 'post',
         url: url + '/logout',
-      
+        
     }).then((response) => {
         console.log(response);
         window.location.href = "login.html"
