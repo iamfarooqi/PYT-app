@@ -1,7 +1,7 @@
 ///SignUP
-var url = "https://pyt-app.herokuapp.com";
+// var url = "https://pyt-app.herokuapp.com";
 
-// const url = "http://localhost:5000"
+const url = "http://localhost:5000"
 
 var socket = io(url);
 socket.on('connect', function () {
@@ -245,11 +245,12 @@ function profile() {
         document.getElementById('phone').innerHTML = response.data.profile.phone;
         document.getElementById("user-id").innerHTML = response.data.profile._id;
         document.getElementById("gender").innerHTML = response.data.profile.gender
-        
+        document.getElementById("profilePic").src = response.data.profile.profilePic;
     },
     (error) => {
         console.log(error.message);
     });
+
     return false
 }
 
@@ -270,4 +271,62 @@ function logout() {
         console.log(error.message);
     });
     return false
+}
+
+// PROFILE PICTURE
+
+function upload() {
+
+    var fileInput = document.getElementById("fileInput");
+
+
+    let formData = new FormData();
+    
+    formData.append("myFile", fileInput.files[0]); // file input is for browser only, use fs to read file in nodejs client
+    // formData.append("myFile", blob, "myFileNameAbc"); // you can also send file in Blob form (but you really dont need to covert a File into blob since it is Actually same, Blob is just a new implementation and nothing else, and most of the time (as of january 2021) when someone function says I accept Blob it means File or Blob) see: https://stackoverflow.com/questions/33855167/convert-data-file-to-blob
+    formData.append("myName", "malik"); // this is how you add some text data along with file
+    formData.append("myDetails",
+        JSON.stringify({
+            "userEmail": sessionStorage.getItem("userEmail"),   // this is how you send a json object along with file, you need to stringify (ofcourse you need to parse it back to JSON on server) your json Object since append method only allows either USVString or Blob(File is subclass of blob so File is also allowed)
+            "year": "2021"
+        })
+    );
+
+    // you may use any other library to send from-data request to server, I used axios for no specific reason, I used it just because I'm using it these days, earlier I was using npm request module but last week it get fully depricated, such a bad news.
+    axios({
+        method: 'post',
+        url: url + "/upload",
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    .then(res => {
+        var userData = res
+        
+        // console.log(`upload Success`+ userData.toString());
+        alert(`Profile Photo uploaded Successfully`);
+        window.location.reload();
+       
+        })
+        .catch(err => {
+            console.log(err);
+        })
+
+    return false; 
+
+}
+
+
+function previewFile() {
+    const preview = document.querySelector('img');
+    const file = document.querySelector('input[type=file]').files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener("load", function () {
+        // convert image file to base64 string
+        preview.src = reader.result;
+    }, false);
+
+    if (file) {
+        reader.readAsDataURL(file);
+    }
 }
