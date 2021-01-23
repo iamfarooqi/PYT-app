@@ -128,3 +128,17 @@ body{
       display: none;
     } */
     
+
+    #profilePic{
+      background-image: url(./images/profile.png);
+      background-repeat: no-repeat;
+      cursor: pointer;
+      position: absolute;
+      left: 25%;
+      top: 0px;
+      z-index: 1;
+    }
+    #profilePic:hover{
+      opacity: 0.9;
+    }
+
