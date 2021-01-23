@@ -207,71 +207,160 @@ app.get("/tweet-get", (req, res, next) => {
 
 //PROFILE PICTURE 
 
-app.post("/upload", upload.any(), (req, res, next) => {
-    userDetails = JSON.parse(req.body.myDetails)
-    userEmail = userDetails.userEmail
+// app.post("/upload", upload.any(), (req, res, next) => {
+//     userDetails = JSON.parse(req.body.myDetails)
+//     userEmail = userDetails.userEmail
    
 
    
-    bucket.upload(
-        req.files[0].path,
-        // {
-        //     destination: `${new Date().getTime()}-new-image.png`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
-        // },
-        function (err, file, apiResponse) {
-            if (!err) {
-                // console.log("api resp: ", apiResponse);
+//     bucket.upload(
+//         req.files[0].path,
+//         // {
+//         //     destination: `${new Date().getTime()}-new-image.png`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
+//         // },
+//         function (err, file, apiResponse) {
+//             if (!err) {
+//                 // console.log("api resp: ", apiResponse);
 
-                // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
-                file.getSignedUrl({
-                    action: 'read',
-                    expires: '03-09-2491'
-                }).then((urlData, err) => {
-                    if (!err) {
-                        console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
-                        console.log("my email is => ", userEmail);
-                        userModel.findOne({ userEmail: userEmail }, {}, (err, user) => {
-                            if (!err) {
-                                tweetModel.updateMany({ userEmail: userEmail }, { profilePic: urlData[0] }, (err, tweetModel) => {
-                                    if (!err) {
-                                        console.log("profile picture updated succesfully");
-                                    }
-                                });
-                                console.log("user is ===>", user);
-                                user.update({ profilePic: urlData[0] }, (err, updatedUrl) => {
-                                    if (!err) {
-                                        res.status(200).send({
-                                            url: urlData[0],
-                                        })
-                                        console.log("succesfully uploaded");
-                                    }
-                                    else {
-                                        res.status(500).send({
-                                            message: "an error occured" + err,
-                                        })
-                                        console.log("error occured whhile uploading");
-                                    }
+//                 // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
+//                 file.getSignedUrl({
+//                     action: 'read',
+//                     expires: '03-09-2491'
+//                 }).then((urlData, err) => {
+//                     if (!err) {
+//                         console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
+//                         // console.log("my email is => ", urlData);
+//                         userModel.findOne({ userEmail: userEmail }, {}, (err, user) => {
+//                             if (!err) {
+//                                 tweetModel.updateMany({ userEmail: userEmail }, { profilePic: urlData[0] }, (err, tweetModel) => {
+//                                     if (!err) {
+//                                         console.log("profile picture updated succesfully");
+//                                     }
+//                                 });
+//                                 console.log("user is ===>", user);
+//                                 console.log("user is ===>", user.email);
+//                                 console.log("user is ===>", email);
+//                                 user.update({ profilePic: urlData[0] }, (err, updatedUrl) => {
+//                                     if (!err) {
+//                                         res.status(200).send({
+//                                             url: urlData[0],
+//                                         })
+//                                         console.log("succesfully uploaded");
+//                                     }
+//                                     else {
+//                                         res.status(500).send({
+//                                             message: "an error occured" + err,
+//                                         })
+//                                         console.log("error occured whhile uploading");
+//                                     }
 
-                                })
-                            }
-                        })
+//                                 })
+//                             }
+//                         })
                         
-                        try {
-                            fs.unlinkSync(req.files[0].path)
+//                         try {
+//                             fs.unlinkSync(req.files[0].path)
                           
-                            return;
-                        } catch (err) {
-                            console.error(err)
-                        }
+//                             return;
+//                         } catch (err) {
+//                             console.error(err)
+//                         }
                      
+//                     }
+//                 })
+//             } else {
+//                 console.log("err: ", err)
+//                 res.status(500).send();
+//             }
+//         });
+// })
+
+app.post("/upload", upload.any(), (req, res, next) => {
+    console.log("req.body: ", JSON.parse(req.body.myDetails));
+    let userEmail = JSON.parse(req.body.myDetails)
+    // console.log("req.email: ", req.body.myDetails);
+    console.log("req.files: ", req.files);
+  
+    console.log("uploaded file name: ", req.files[0].originalname);
+    console.log("file type: ", req.files[0].mimetype);
+    console.log("file name in server folders: ", req.files[0].filename);
+    console.log("file path in server folders: ", req.files[0].path);
+  
+    bucket.upload(
+      req.files[0].path,
+      // {
+      //     destination: `${new Date().getTime()}-new-image.png`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
+      // },
+      function (err, file, apiResponse) {
+        if (!err) {
+          // console.log("api resp: ", apiResponse);
+  
+          // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
+          file
+            .getSignedUrl({
+              action: "read",
+              expires: "03-09-2491",
+            })
+            .then((urlData, err) => {
+              if (!err) {
+                console.log("public downloadable url: ", urlData[0]); // this is public downloadable url
+                userModel.findOne(
+                  { email: userEmail.email },
+                  (err, data) => {
+                    if (!err) {
+                      console.log("user data ====>", data);
+                      tweetModel.updateMany({email:userEmail.email},{profilePic:urlData[0]},(err,tweet)=>{
+                        if(!err){
+                          console.log("tweet model updated");
+                        }
+                      })
+                    } else {
+                      console.log("user not found");
                     }
-                })
-            } else {
-                console.log("err: ", err)
-                res.status(500).send();
-            }
-        });
-})
+                    data.update(
+                      { profilePic: urlData[0] },
+                      
+                      (err, updatedUrl) => {
+                        if (!err) {
+                          res.status(200).send({
+                            message: "profile picture updated succesfully",
+                            url: urlData[0],
+                          });
+                        } else {
+                          res.status(500).send({
+                            message: "an error occured",
+                          });
+                        }
+                      }
+                    );
+                    
+                    
+                    
+                  }
+                );
+  
+                // // delete file from folder before sending response back to client (optional but recommended)
+                // // optional because it is gonna delete automatically sooner or later
+                // // recommended because you may run out of space if you dont do so, and if your files are sensitive it is simply not safe in server folder
+                // try {
+                //     fs.unlinkSync(req.files[0].path)
+                //     //file removed
+                // } catch (err) {
+                //     console.error(err)
+                // }
+                // res.send({
+                //   message: "ok",
+                //   url: urlData[0],
+                // });
+              }
+            });
+        } else {
+          console.log("err: ", err);
+          res.status(500).send();
+        }
+      }
+    );
+  });
 //SERVER
 
 server.listen(PORT, () => {

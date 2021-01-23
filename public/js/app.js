@@ -239,13 +239,17 @@ function profile() {
         url: url + '/profile',
         credentials: 'include',
     }).then((response) => {
-        // console.log(response);
         document.getElementById('name').innerHTML = response.data.profile.name;
         document.getElementById('email').innerHTML = response.data.profile.email;
         document.getElementById('phone').innerHTML = response.data.profile.phone;
         document.getElementById("user-id").innerHTML = response.data.profile._id;
         document.getElementById("gender").innerHTML = response.data.profile.gender
         document.getElementById("profilePic").src = response.data.profile.profilePic;
+        // console.log(response.data.profile.email);
+        // console.log(response.data.profile.profilePic);
+        // console.log(response);
+        sessionStorage.setItem("userEmail", response.data.profile.email);
+        sessionStorage.setItem("profileUrl", response.data.profile.profilePic);
     },
     (error) => {
         console.log(error.message);
@@ -275,46 +279,89 @@ function logout() {
 
 // PROFILE PICTURE
 
-function upload() {
+// function upload() {
 
-    var fileInput = document.getElementById("fileInput");
+//     var fileInput = document.getElementById("fileInput");
 
 
-    let formData = new FormData();
-    
-    formData.append("myFile", fileInput.files[0]); // file input is for browser only, use fs to read file in nodejs client
-    // formData.append("myFile", blob, "myFileNameAbc"); // you can also send file in Blob form (but you really dont need to covert a File into blob since it is Actually same, Blob is just a new implementation and nothing else, and most of the time (as of january 2021) when someone function says I accept Blob it means File or Blob) see: https://stackoverflow.com/questions/33855167/convert-data-file-to-blob
-    formData.append("myName", "malik"); // this is how you add some text data along with file
-    formData.append("myDetails",
-        JSON.stringify({
-            "userEmail": sessionStorage.getItem("userEmail"),   // this is how you send a json object along with file, you need to stringify (ofcourse you need to parse it back to JSON on server) your json Object since append method only allows either USVString or Blob(File is subclass of blob so File is also allowed)
-            "year": "2021"
-        })
-    );
+//     let formData = new FormData();
+//     console.log(formData)
+//     formData.append("myFile", fileInput.files[0]); // file input is for browser only, use fs to read file in nodejs client
+//     // formData.append("myFile", blob, "myFileNameAbc"); // you can also send file in Blob form (but you really dont need to covert a File into blob since it is Actually same, Blob is just a new implementation and nothing else, and most of the time (as of january 2021) when someone function says I accept Blob it means File or Blob) see: https://stackoverflow.com/questions/33855167/convert-data-file-to-blob
+//     formData.append("myName", "malik"); // this is how you add some text data along with file
+//     formData.append("myDetails",
+//         JSON.stringify({
+//             "email": sessionStorage.getItem("email"),   // this is how you send a json object along with file, you need to stringify (ofcourse you need to parse it back to JSON on server) your json Object since append method only allows either USVString or Blob(File is subclass of blob so File is also allowed)
+//             "year": "2021"
+//         })
+//     );
 
-    // you may use any other library to send from-data request to server, I used axios for no specific reason, I used it just because I'm using it these days, earlier I was using npm request module but last week it get fully depricated, such a bad news.
-    axios({
-        method: 'post',
-        url: url + "/upload",
-        data: formData,
-        headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    .then(res => {
-        var userData = res
-        
-        // console.log(`upload Success`+ userData.toString());
-        alert(`Profile Photo uploaded Successfully`);
-        window.location.reload();
+//     // you may use any other library to send from-data request to server, I used axios for no specific reason, I used it just because I'm using it these days, earlier I was using npm request module but last week it get fully depricated, such a bad news.
+//     axios({
+//         method: 'post',
+//         url: url + "/upload",
+//         data: formData,
+//         headers: { 'Content-Type': 'multipart/form-data' }
+//     })
+//     .then(res => {
+//         var userData = res
+//         console.log(res)
+//         // console.log(sessionStorage)
+//         // console.log(`upload Success`+ userData.toString());
+//         alert(`Profile Photo uploaded Successfully`);
+//         window.location.reload();
        
-        })
-        .catch(err => {
-            console.log(err);
-        })
+//         })
+//         .catch(err => {
+//             console.log(err);
+//         })
 
-    return false; 
+//     return false; 
 
-}
+// }
 
+const upload = () => {
+    let fileInp = document.getElementById("fileInput");
+    // console.log("fileInp", fileInp);
+    // console.log("fileInp", fileInp.files[0]);
+  
+    let formData = new FormData();
+  
+    formData.append("myFile", fileInp.files[0]);
+    formData.append("myName", "Hassan");
+    formData.append(
+      "myDetails",
+      JSON.stringify({
+        email: sessionStorage.getItem("userEmail"),
+        class: "web",
+      })
+    );
+    axios({
+      method: "post",
+      url: url + "/upload",
+      data: formData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then((res) => {
+        // console.log("upload success", res.data);
+        // console.log("photo url", res.data.url);
+        // var img = document.createElement("img");
+        // img.setAttribute("src", res.data.url);
+        // img.setAttribute("width", "100");
+        // img.setAttribute("height", "100");
+        // img.setAttribute("alt", "user image");
+        // document.getElementById("img").appendChild(img);
+        // document.getElementById("userImg").src = res.data.url;
+        // document.getElementById("fileInput").style.display = "none";
+        // document.getElementById("uploadBtn").style.display = "none";
+        window.location.reload();
+        alert("Profile Picture updated Successfully");
+      })
+      .catch((err) => console.log(err));
+    //   console.log(formData)
+  
+    return false;
+  };
 
 function previewFile() {
     const preview = document.querySelector('img');
@@ -329,4 +376,5 @@ function previewFile() {
     if (file) {
         reader.readAsDataURL(file);
     }
+    return false;
 }

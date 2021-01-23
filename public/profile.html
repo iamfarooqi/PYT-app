@@ -67,7 +67,7 @@
     <div style="margin-top: 2%;" class="container main-secction">
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 image-section">
-                 <img onchange="previewFile()"> 
+                 <img > 
             </div> 
             <div class="row user-left-part">
                 <div class="col-md-3 col-sm-3 col-xs-12 user-profil-part pull-left">
@@ -88,12 +88,21 @@
 
                                       <!-- <div class="imgContainer"> -->
 
-                                        <label class="filebutton">
+                                        <!-- <label class="filebutton">
                                             <img id="profilePic" for="fileInput" alt="profile pic"  src="images/" class="rounded-circle" onchange="previewFile()" > <br>
+<br>
+                                          <input  class="opacityFile" type="file" id="fileInput" name="myfile" onchange="upload()">
+                                          <button  class="btn btn-outline-primary" for="fileInput" type="submit" onclick="upload()">upload</button> 
+                                          </label> -->
 
-                                          <input style="display: none;" class="opacityFile" type="file" id="fileInput" name="myfile" onchange="upload()">
-                                          <!-- <button  class="btn btn-outline-primary" for="fileInput" type="submit" onclick="upload()">upload</button> -->
-                                          </label>
+                                          <form class="image-upload">
+                                            <input style="display: none;"  type="file" id="fileInput" onchange="upload()"  /><br />
+                                            <label for="fileInput">
+                                                <!-- <img alt="profile image" id="userImg" class="profileImage" /> -->
+                                                <img id="profilePic" for="fileInput" alt="profile pic"  src="images/profile.png" onchange="previewFile()"  class="rounded-circle" >
+                                            </label>
+                                            <!-- <input type="submit" value="upload" id="uploadBtn"  class="uBtn" /> -->
+                                          </form>
 
 
                         </div>
