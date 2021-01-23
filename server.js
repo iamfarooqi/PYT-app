@@ -89,8 +89,10 @@ app.use(function (req, res, next) {
             const diff = nowDate - issueDate; 
         
 
-            if (diff > 300000) { // expire after 5 min (in milis)
+            if (diff > 30000000) { // expire after 5 min (in milis)
                 res.status(401).send("token expired")
+                console.log(res)
+                alert(res)
             } else { 
                 var token = jwt.sign({
                     id: decodedData.id,
@@ -156,7 +158,7 @@ app.post("/tweet", (req, res, next) => {
                     });
                 }
                 else if (data) {
-                    console.log("data checking Tweeter ", data);
+                    console.log("data checking Tweeter: ", data);
                     res.send({
                         message: "Your Tweet Send",
                         status: 200,
@@ -207,73 +209,6 @@ app.get("/tweet-get", (req, res, next) => {
 
 //PROFILE PICTURE 
 
-// app.post("/upload", upload.any(), (req, res, next) => {
-//     userDetails = JSON.parse(req.body.myDetails)
-//     userEmail = userDetails.userEmail
-   
-
-   
-//     bucket.upload(
-//         req.files[0].path,
-//         // {
-//         //     destination: `${new Date().getTime()}-new-image.png`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
-//         // },
-//         function (err, file, apiResponse) {
-//             if (!err) {
-//                 // console.log("api resp: ", apiResponse);
-
-//                 // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
-//                 file.getSignedUrl({
-//                     action: 'read',
-//                     expires: '03-09-2491'
-//                 }).then((urlData, err) => {
-//                     if (!err) {
-//                         console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
-//                         // console.log("my email is => ", urlData);
-//                         userModel.findOne({ userEmail: userEmail }, {}, (err, user) => {
-//                             if (!err) {
-//                                 tweetModel.updateMany({ userEmail: userEmail }, { profilePic: urlData[0] }, (err, tweetModel) => {
-//                                     if (!err) {
-//                                         console.log("profile picture updated succesfully");
-//                                     }
-//                                 });
-//                                 console.log("user is ===>", user);
-//                                 console.log("user is ===>", user.email);
-//                                 console.log("user is ===>", email);
-//                                 user.update({ profilePic: urlData[0] }, (err, updatedUrl) => {
-//                                     if (!err) {
-//                                         res.status(200).send({
-//                                             url: urlData[0],
-//                                         })
-//                                         console.log("succesfully uploaded");
-//                                     }
-//                                     else {
-//                                         res.status(500).send({
-//                                             message: "an error occured" + err,
-//                                         })
-//                                         console.log("error occured whhile uploading");
-//                                     }
-
-//                                 })
-//                             }
-//                         })
-                        
-//                         try {
-//                             fs.unlinkSync(req.files[0].path)
-                          
-//                             return;
-//                         } catch (err) {
-//                             console.error(err)
-//                         }
-                     
-//                     }
-//                 })
-//             } else {
-//                 console.log("err: ", err)
-//                 res.status(500).send();
-//             }
-//         });
-// })
 
 app.post("/upload", upload.any(), (req, res, next) => {
     console.log("req.body: ", JSON.parse(req.body.myDetails));
