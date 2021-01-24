@@ -55,7 +55,7 @@ function login() {
         window.location.href = "home.html"
     }, (error) => {
         console.log(error);
-        alert(error)
+        alert("Please write your correct email and password")
     });
     
     return false;
@@ -112,11 +112,14 @@ function forgot2() {
 //POST
 
 function tweetpost() {
+    var email=sessionStorage.getItem("userEmail");
+    var tweet= document.getElementById("your-post").value;
     axios({
         method: 'post',
         url: url + "/tweet",
         data: {
-            tweet: document.getElementById("your-post").value,
+            email: email,
+            tweet:tweet,
         },withCredentials: true
 
     }).then((response) => {
@@ -151,6 +154,7 @@ function gettweet() {
             </p>`;
             eachtweet.setAttribute('class','reverse')
             document.getElementById("mytweet").appendChild(eachtweet);
+            // console.log(data)
             
         }
         
@@ -169,28 +173,45 @@ function clear(){
 
 //My Tweets
 
-function mytweet() {
-    axios({
-        method: 'get',
-        url: url + '/myTweets',
-        credentials: 'include',
-    }).then((response) => {
-        let tweets = response.data.tweet;
-        for (i = 0; i < tweets.length; i++) {
-            var eachtweet = document.createElement("li");
-            eachtweet.innerHTML = `<h4>
-                ${tweets[i].username}
-                </h4>
-                 <p>
-                    ${tweets[i].tweet}
-                </p>`;
-            document.getElementById("getalltweet").appendChild(eachtweet);
-        }
-    }, (error) => {
-        console.log(error.message);
-    });
-}
+// socket.on("NEW_TWEET", (newTweet) => {
+//     console.log(newTweet);
+//     let eachTweet = document.createElement("div");
+//     eachTweet.setAttribute("class", "myClass");
+//     eachTweet.innerHTML = `<div class="onTweet"><img src="${newTweet.profileUrl}"  class="tweetImg" alt="use profile"/><h3 class="tweetCard">  ${newTweet.name}<br /><span class="tweet">${newTweet.tweet}</span></h3></div>`;
+//     document.getElementById("userTweets").appendChild(eachTweet);
+//     // document.getElementById("allTweets").appendChild(eachTweet);
+//   });
 
+const userTweets = () => {
+    document.getElementById("userTweets").innerHTML = "";
+    // var toggle = document.getElementById("allTweets");
+    // toggle.style.display = "block";
+    // document.getElementById("userTweets").style.display = "none";
+    axios({
+      method: "get",
+      url: url + "/userTweets",
+    })
+      .then((res) => {
+        // console.log("all tweets ==>", res.data.tweets);
+        let userTweet = res.data.tweet;
+        for (let i = 0; i < userTweet.length; i++) {
+            // var newTweet = document.createElement("div");
+            // var eachtweet = document.createElement("div");
+            var eachtweet = document.createElement("li");
+        //   let eachCurrentUserTweet = document.createElement("div");
+    
+        eachtweet.innerHTML = eachtweet.innerHTML = `<h5>
+        ${userTweet[i].username}
+        </h5>
+        <p>
+        ${userTweet[i].tweet}
+        </p>`;
+        //   eachtweet.setAttribute("class", "reverse");
+          document.getElementById("userTweets").appendChild(eachtweet);
+        }
+      })
+      .catch((err) => console.log("error==>", err));
+  };
 
 
 
@@ -199,7 +220,7 @@ function mytweet() {
 socket.on("NEW_POST", (newPost) => {
     
     
-    // console.log(newPost);
+    // console(newPost);
     
     let jsonRes = newPost;
     var eachtweet = document.createElement("li");
@@ -218,25 +239,7 @@ socket.on("NEW_POST", (newPost) => {
 })
 
 
-socket.on("MY_POST", (newPost) => {
 
-    console.log("second socket chnage", newPost)
-    console.log(newPost);
-
-    let jsonRes = newPost;
-    var eachtweet = document.createElement("li");
-    eachtweet.innerHTML = `<h4>
-    ${jsonRes.username}
-    </h4>
-    
-     <p>
-        ${jsonRes.tweet}
-    </p>`;
-
-    document.getElementById("getalltweet").appendChild(eachtweet);
-
-
-})
 
 
 
@@ -341,7 +344,7 @@ const upload = () => {
       "myDetails",
       JSON.stringify({
         email: sessionStorage.getItem("userEmail"),
-        class: "web",
+        class: "Profile Picture",
       })
     );
     axios({

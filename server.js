@@ -145,11 +145,13 @@ app.post("/tweet", (req, res, next) => {
             message: "Please write tweet"
         })
     }
-    userModel.findById(req.body.jToken.id, 'name', function (err, user) {
+    userModel.findById(req.body.jToken.id, 'name tweet ProfilePic', function (err, user) {
         if (!err) {
             tweetModel.create({
                 "username": user.name,
-                "tweet": req.body.tweet
+                "email": req.body.email,
+                "tweet": req.body.tweet,
+                "profilePic": user.profilePic
             }, function (err, data) {
                 if (err) {
                     res.send({
@@ -162,10 +164,14 @@ app.post("/tweet", (req, res, next) => {
                     res.send({
                         message: "Your Tweet Send",
                         status: 200,
-                        tweet: data
+                        tweet: data,
+                        profilePic: user.profilePic
                     });
+                    
+                    
                     io.emit("NEW_POST", data);
-
+                    
+                
                     console.log("server checking code tweet ", data.tweet)
                 } else {
                     res.send({
@@ -185,6 +191,25 @@ app.post("/tweet", (req, res, next) => {
 
 
 });
+
+app.get("/userTweets", (req, res) => {
+    console.log("my tweets user", req.body);
+    
+    
+    tweetModel.find({email: req.body.jToken.email}, (err, data) => {
+        if (!err) {
+            console.log("user email", req.body.jToken.email)
+        
+        console.log("current user tweets==>", data );
+        res.send({
+          tweet: data,
+        });
+      } else {
+        console.log("error: ", err);
+        res.status(500).send({});
+      }
+    });
+  });
 
 app.get("/tweet-get", (req, res, next) => {
     tweetModel.find({}, function (err, data) {
@@ -252,7 +277,7 @@ app.post("/upload", upload.any(), (req, res, next) => {
                     } else {
                       console.log("user not found");
                     }
-                    data.update(
+                        data.update(
                       { profilePic: urlData[0] },
                       
                       (err, updatedUrl) => {
@@ -296,6 +321,8 @@ app.post("/upload", upload.any(), (req, res, next) => {
       }
     );
   });
+
+ 
 //SERVER
 
 server.listen(PORT, () => {

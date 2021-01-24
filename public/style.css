@@ -65,10 +65,19 @@ h2 {
 
 .reverse{
     transform: rotate(180deg);
+    border-bottom: 1px solid black;
+    margin-top: .5%;
 }
 #mytweet{
     list-style-type: none;
 }
+
+.reverse{
+    transform: rotate(180deg);
+
+}
+
+
 
 
 
