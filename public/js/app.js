@@ -1,7 +1,7 @@
 ///SignUP
-var url = "https://pyt-app.herokuapp.com";
+// var url = "https://pyt-app.her/okuapp.com";
 
-// const url = "http://localhost:5000"
+const url = "http://localhost:5000"
 
 var socket = io(url);
 socket.on('connect', function () {
@@ -143,10 +143,13 @@ function gettweet() {
         credentials: 'include',
     }).then((response) => {
         let tweets = response.data.tweet;
+
         
         for (i = 0; i < tweets.length; i++) {
             var eachtweet = document.createElement("li");
-            eachtweet.innerHTML = `<h5>
+            eachtweet.innerHTML = 
+            `<h5>
+            <img class="profile" src="${tweets[i].profilePic}">
             ${tweets[i].username}
             </h5>
             <p>
@@ -194,21 +197,25 @@ const userTweets = () => {
       .then((res) => {
         // console.log("all tweets ==>", res.data.tweets);
         let userTweet = res.data.tweet;
+        // let pic = profilePic;
+    //    console.log(pic)
         for (let i = 0; i < userTweet.length; i++) {
-            // var newTweet = document.createElement("div");
-            // var eachtweet = document.createElement("div");
+            
             var eachtweet = document.createElement("li");
-        //   let eachCurrentUserTweet = document.createElement("div");
+       
     
         eachtweet.innerHTML = eachtweet.innerHTML = `<h5>
+        <img class="profile" src="${userTweet[i].profilePic}">
         ${userTweet[i].username}
         </h5>
+            
         <p>
         ${userTweet[i].tweet}
         </p>`;
           eachtweet.setAttribute("class", "reverse");
           document.getElementById("userTweets").appendChild(eachtweet);
         }
+        
       })
       .catch((err) => console.log("error==>", err));
   };

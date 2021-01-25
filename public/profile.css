@@ -148,3 +148,10 @@ body{
   #userTweets{
     list-style-type: none;
 }
+
+.profile{
+  /* border: 1px solid black; */
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
