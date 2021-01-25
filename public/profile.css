@@ -141,4 +141,10 @@ body{
     #profilePic:hover{
       opacity: 0.9;
     }
+    .reverse{
+      transform: rotate(180deg);
+  }
 
+  #userTweets{
+    list-style-type: none;
+}

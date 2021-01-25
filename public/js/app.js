@@ -206,7 +206,7 @@ const userTweets = () => {
         <p>
         ${userTweet[i].tweet}
         </p>`;
-        //   eachtweet.setAttribute("class", "reverse");
+          eachtweet.setAttribute("class", "reverse");
           document.getElementById("userTweets").appendChild(eachtweet);
         }
       })
