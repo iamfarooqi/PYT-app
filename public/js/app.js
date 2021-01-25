@@ -1,7 +1,7 @@
 ///SignUP
-var url = "https://pyt-app.herokuapp.com";
+// var url = "https://pyt-app.herokuapp.com";
 
-// const url = "http://localhost:5000"
+const url = "http://localhost:5000"
 
 var socket = io(url);
 socket.on('connect', function () {
@@ -143,6 +143,7 @@ function gettweet() {
         credentials: 'include',
     }).then((response) => {
         let tweets = response.data.tweet;
+        // console.log(tweets)
 
         
         for (i = 0; i < tweets.length; i++) {
@@ -170,7 +171,7 @@ function gettweet() {
 }
 
 function clear(){
-    document. getElementById('myInput'). value = ''
+    document. getElementById('your-post'). value = ''
     }
 
 
@@ -232,6 +233,8 @@ socket.on("NEW_POST", (newPost) => {
     let jsonRes = newPost;
     var eachtweet = document.createElement("li");
     eachtweet.innerHTML = `<h4>
+    <img class="profile" src="${newPost.profilePic}">
+    
     ${jsonRes.username}
     </h4>
    
