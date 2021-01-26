@@ -1,7 +1,7 @@
 ///SignUP
-// var url = "https://pyt-app.herokuapp.com";
+var url = "https://pyt-app.herokuapp.com";
 
-const url = "http://localhost:5000"
+// const url = "http://localhost:5000"
 
 var socket = io(url);
 socket.on('connect', function () {
@@ -229,17 +229,16 @@ socket.on("NEW_POST", (newPost) => {
     
     
     // console(newPost);
-    
-    let jsonRes = newPost;
+    console.log("profile pic",newPost)
     var eachtweet = document.createElement("li");
     eachtweet.innerHTML = `<h4>
-    <img class="profile" src="${newPost.profilePic}">
+    <img class="profile" src="${newPost.profilePic}" />
     
-    ${jsonRes.username}
+    ${newPost.username}
     </h4>
    
     <p>
-    ${jsonRes.tweet}
+    ${newPost.tweet}
     </p>`;
     eachtweet.setAttribute('class','reverse')
     

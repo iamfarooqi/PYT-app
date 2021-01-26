@@ -145,7 +145,7 @@ app.post("/tweet", (req, res, next) => {
             message: "Please write tweet"
         })
     }
-    userModel.findById(req.body.jToken.id, 'name tweet ProfilePic', function (err, user) {
+    userModel.findById(req.body.jToken.id, 'name tweet profilePic', function (err, user) {
         if (!err) {
             tweetModel.create({
                 "username": user.name,
@@ -165,7 +165,7 @@ app.post("/tweet", (req, res, next) => {
                         message: "Your Tweet Send",
                         status: 200,
                         tweet: data,
-                        profilePic: user.profilePic
+                       
                     });
                     
                     
