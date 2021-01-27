@@ -130,8 +130,8 @@ body{
     
 
     #profilePic{
-      background-image: url(./images/profile.png);
-      background-repeat: no-repeat;
+      /* background-image: url(./images/profile.png); */
+      /* background-repeat: no-repeat; */
       cursor: pointer;
       position: absolute;
       left: 25%;
